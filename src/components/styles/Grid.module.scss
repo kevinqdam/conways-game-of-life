@@ -9,5 +9,11 @@
 .input-side-length {
   display: flex;
   justify-content: center;
-  padding-top: 10px;
+  padding: 16px;
+}
+
+.btns {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
 }

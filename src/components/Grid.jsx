@@ -1,27 +1,37 @@
-import React, { useState } from 'react';
-import { InputNumber } from 'antd';
+import React, { useState, useRef } from 'react';
+import { InputNumber, Button } from 'antd';
+import { ClearOutlined, PlaySquareOutlined } from '@ant-design/icons';
 
 import Cell from './Cell';
+import createGrid from '../factory/createGrid';
 import { GRID_SIDE_SIZE_IN_PX, MAX_SIDE_LENGTH, MIN_SIDE_LENGTH } from '../constants';
 
 import styles from './styles/Grid.module.scss';
+import cellKey from '../util/cellKey';
 
 const Grid = function Grid() {
-  /* Grid Factory */
-  const createGrid = (n) => Array.from(
-    // eslint-disable-next-line no-shadow
-    { length: n }, (_, row) => Array.from({ length: n }, (_, col) => <Cell key={`${row},${col}`} />),
-  );
-
   /* Hooks */
+  const keysOfActiveCells = useRef(new Set());
   const [sideLength, setSideLength] = useState(MIN_SIDE_LENGTH);
-  const [grid, setGrid] = useState(createGrid(sideLength));
+  const [grid, setGrid] = useState(createGrid(sideLength, keysOfActiveCells.current));
 
   /* Event Handlers */
   const handleSideLengthInput = (n) => {
     setSideLength(n);
-    setGrid(createGrid(n));
+    setGrid(createGrid(n, keysOfActiveCells.current));
   };
+  const handleGridClick = (e) => {
+    const key = e.target.attributes['cell-key'].value;
+    if (keysOfActiveCells.current.has(key)) keysOfActiveCells.current.delete(key);
+    else keysOfActiveCells.current.add(key);
+
+    setGrid(createGrid(sideLength, keysOfActiveCells.current));
+  };
+  const handleClear = (e) => {
+    keysOfActiveCells.current.clear();
+
+    setGrid(createGrid(sideLength, keysOfActiveCells.current));
+  }
 
   /* Styles */
   const gridClassNames = [
@@ -35,14 +45,22 @@ const Grid = function Grid() {
     gridTemplateColumns: `repeat(${Math.floor(sideLength)}, 1fr)`,
   };
 
-  const inputSideLengthClassNames = [
-    styles.center,
-    styles['input-side-length'],
-  ].join(' ');
+  const inputSideLengthClassNames = [styles['input-side-length']].join(' ');
+  const btnsClassNames = [styles.btns].join(' ');
 
   return (
-    <div>
-      <div style={gridDynamicStyles} className={gridClassNames}>{grid}</div>
+    /* eslint-disable jsx-a11y/click-events-have-key-events */
+    /* eslint-disable jsx-a11y/no-static-element-interactions */
+    <div onClick={handleGridClick}>
+      <div style={gridDynamicStyles} className={gridClassNames}>
+        {
+          grid.map(
+            (rowArr, row) => rowArr.map(
+              (cell, col) => <Cell key={cellKey(row, col)} cell={cell} />,
+            ),
+          )
+        }
+      </div>
       <div className={inputSideLengthClassNames}>
         <InputNumber
           size="large"
@@ -52,7 +70,13 @@ const Grid = function Grid() {
           onChange={handleSideLengthInput}
         />
       </div>
+      <div className={btnsClassNames}>
+        <Button size="large" icon={<ClearOutlined />} onClick={handleClear} />
+        <Button size="large" type="primary" icon={<PlaySquareOutlined />} />
+      </div>
     </div>
+    /* eslint-enable jsx-a11y/click-events-have-key-events */
+    /* eslint-enable jsx-a11y/no-static-element-interactions */
   );
 };
 

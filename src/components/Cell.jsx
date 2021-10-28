@@ -1,28 +1,34 @@
-import React, { useState } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 import styles from './styles/Cell.module.scss';
+import isNil from '../util/isNil';
+import not from '../util/not';
+import cellKey from '../util/cellKey';
 
-const Cell = function Cell() {
-  const [isActive, setIsActive] = useState(false);
-
-  /* Event Handlers */
-  const handleClick = () => { setIsActive(!isActive); };
+const Cell = function Cell(props) {
+  const { cell: { isActive, row, col } } = props;
 
   /* Styles */
-  const cellDynamicstyles = {
-    backgroundColor: isActive ? 'black' : null,
-  };
-  const cellClassNames = [
-    styles.cell,
-  ].join(' ');
+  const classNames = [styles.cell, (isActive ? styles.active : null)].filter(not(isNil)).join(' ');
 
   return (
-    /* eslint-disable jsx-a11y/no-static-element-interactions */
-    /* eslint-disable jsx-a11y/click-events-have-key-events */
-    <div style={cellDynamicstyles} className={cellClassNames} onClick={handleClick} />
-    /* eslint-enable jsx-a11y/no-static-element-interactions */
-    /* eslint-enable jsx-a11y/click-events-have-key-events */
+    <div className={classNames} cell-key={cellKey(row, col)} />
   );
+};
+Cell.propTypes = {
+  cell: {
+    isActive: PropTypes.bool,
+    row: PropTypes.number,
+    col: PropTypes.number,
+  },
+};
+Cell.defaultProps = {
+  cell: {
+    isActive: false,
+    row: null,
+    col: null,
+  },
 };
 
 export default Cell;
