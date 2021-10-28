@@ -27,11 +27,11 @@ const Grid = function Grid() {
 
     setGrid(createGrid(sideLength, keysOfActiveCells.current));
   };
-  const handleClear = (e) => {
+  const handleClear = () => {
     keysOfActiveCells.current.clear();
 
     setGrid(createGrid(sideLength, keysOfActiveCells.current));
-  }
+  };
 
   /* Styles */
   const gridClassNames = [
