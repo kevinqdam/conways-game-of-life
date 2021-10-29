@@ -1,7 +1,7 @@
 # Conway's Game of Life
 
 ## Demonstration
-Try the app [here](#) on GitHub pages!
+Try the app [here](https://kevinqdam.github.io/conways-game-of-life) on GitHub pages!
 
 ## Usage Instructions to run locally
 1. Clone this repository and navigate to the root.
