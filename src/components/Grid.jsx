@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { InputNumber, Button } from 'antd';
+import { InputNumber, Slider, Button } from 'antd';
 import { ClearOutlined, PauseOutlined, PlaySquareOutlined } from '@ant-design/icons';
 
 import Cell from './Cell';
@@ -9,6 +9,7 @@ import { GRID_SIDE_SIZE_IN_PX, MAX_SIDE_LENGTH, MIN_SIDE_LENGTH } from '../const
 import styles from './styles/Grid.module.scss';
 import cellKey from '../util/cellKey';
 import nextGen from '../util/nextGen';
+import hzToMsPerFrame from '../util/hzToMsPerFrame';
 
 const Grid = function Grid() {
   /* Hooks */
@@ -17,6 +18,7 @@ const Grid = function Grid() {
   const [grid, setGrid] = useState(createGrid(sideLength, keysOfActiveCells.current));
   const [isRunning, setIsRunning] = useState(false);
   const isRunningRef = useRef(isRunning);
+  const speedRef = useRef(hzToMsPerFrame(1));
 
   /* Game of Life Runner */
   const run = useCallback(() => {
@@ -24,7 +26,7 @@ const Grid = function Grid() {
 
     keysOfActiveCells.current = nextGen(sideLength, keysOfActiveCells.current);
     setGrid(createGrid(sideLength, keysOfActiveCells.current));
-    setTimeout(run, 1000);
+    setTimeout(run, speedRef.current);
   }, [sideLength]);
 
   /* Event Handlers */
@@ -39,6 +41,7 @@ const Grid = function Grid() {
 
     setGrid(createGrid(sideLength, keysOfActiveCells.current));
   };
+  const handleSpeedChange = (newSpeed) => { speedRef.current = hzToMsPerFrame(newSpeed); };
   const handleClear = () => {
     keysOfActiveCells.current.clear();
     setIsRunning(false);
@@ -68,6 +71,7 @@ const Grid = function Grid() {
   };
 
   const inputSideLengthClassNames = [styles['input-side-length']].join(' ');
+  const sliderClassNames = [styles.slider].join(' ');
   const btnsClassNames = [styles.btns].join(' ');
 
   return (
@@ -91,6 +95,15 @@ const Grid = function Grid() {
           defaultValue={MIN_SIDE_LENGTH}
           onChange={handleSideLengthInput}
           disabled={isRunningRef.current}
+        />
+      </div>
+      <div className={sliderClassNames}>
+        <Slider
+          defaultValue={1}
+          min={1}
+          max={50}
+          onChange={handleSpeedChange}
+          style={{ width: '200px' }}
         />
       </div>
       <div className={btnsClassNames}>

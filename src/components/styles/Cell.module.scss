@@ -1,8 +1,10 @@
+$wall-color: rgb(121, 121, 121);
+
 .cell {
-  border-top: 1px solid black;
-  border-right: 1px solid black;
-  border-bottom: 1px solid black;
-  border-left: 1px solid black;
+  border-top: 1px solid $wall-color;
+  border-right: 1px solid $wall-color;
+  border-bottom: 1px solid $wall-color;
+  border-left: 1px solid $wall-color;
 }
 
 .active {
