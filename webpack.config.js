@@ -5,7 +5,7 @@ const path = require('path');
 module.exports = {
   entry: ['regenerator-runtime/runtime.js', './src/index.jsx'],
   output: {
-    filename: 'bundle.[hash].js',
+    filename: 'bundle.[fullhash].js',
     path: path.resolve(__dirname, 'dist'),
   },
   plugins: [

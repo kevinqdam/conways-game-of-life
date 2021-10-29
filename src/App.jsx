@@ -18,7 +18,7 @@ const App = () => (
         <p>Conway&apos;s Game of Life © 2021 Created by Kevin Dam</p>
         <a
           className={styles['anchor-color']}
-          href="#"
+          href="https://github.com/kevinqdam/conways-game-of-life"
         >
           <GithubFilled className={styles.icon} />
         </a>
