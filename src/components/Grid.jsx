@@ -1,6 +1,8 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { InputNumber, Slider, Button } from 'antd';
-import { ClearOutlined, PauseOutlined, PlaySquareOutlined } from '@ant-design/icons';
+import {
+  ClearOutlined, QuestionOutlined, PauseOutlined, PlaySquareOutlined,
+} from '@ant-design/icons';
 
 import Cell from './Cell';
 import createGrid from '../factory/createGrid';
@@ -10,6 +12,7 @@ import styles from './styles/Grid.module.scss';
 import cellKey from '../util/cellKey';
 import nextGen from '../util/nextGen';
 import hzToMsPerFrame from '../util/hzToMsPerFrame';
+import randomActiveCells from '../util/randomActiveCells';
 
 const Grid = function Grid() {
   /* Hooks */
@@ -18,7 +21,7 @@ const Grid = function Grid() {
   const [grid, setGrid] = useState(createGrid(sideLength, keysOfActiveCells.current));
   const [isRunning, setIsRunning] = useState(false);
   const isRunningRef = useRef(isRunning);
-  const speedRef = useRef(hzToMsPerFrame(1));
+  const speedRef = useRef(hzToMsPerFrame(7));
 
   /* Game of Life Runner */
   const run = useCallback(() => {
@@ -46,6 +49,10 @@ const Grid = function Grid() {
     keysOfActiveCells.current.clear();
     setIsRunning(false);
     isRunningRef.current = false;
+    setGrid(createGrid(sideLength, keysOfActiveCells.current));
+  };
+  const handleRandom = () => {
+    keysOfActiveCells.current = randomActiveCells(sideLength);
     setGrid(createGrid(sideLength, keysOfActiveCells.current));
   };
   const handlePlayPause = () => {
@@ -103,7 +110,7 @@ const Grid = function Grid() {
       </div>
       <div className={sliderClassNames}>
         <Slider
-          defaultValue={1}
+          defaultValue={7}
           min={1}
           max={50}
           onChange={handleSpeedChange}
@@ -113,6 +120,7 @@ const Grid = function Grid() {
       </div>
       <div className={btnsClassNames}>
         <Button size="large" icon={<ClearOutlined />} onClick={handleClear} />
+        <Button size="large" icon={<QuestionOutlined />} onClick={handleRandom} />
         {(
         isRunningRef.current
           ? <Button size="large" type="primary" icon={<PauseOutlined />} onClick={handlePlayPause} />

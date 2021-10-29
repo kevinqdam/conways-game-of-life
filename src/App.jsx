@@ -9,11 +9,11 @@ import styles from './App.module.scss';
 const { Footer, Content } = Layout;
 
 const App = () => (
-  <Layout>
-    <Content>
+  <Layout className={styles.layout}>
+    <Content className={styles.content}>
       <Grid />
     </Content>
-    <Footer>
+    <Footer className={styles.footer}>
       <div className={styles['footer-items']}>
         <p>Conway&apos;s Game of Life © 2021 Created by Kevin Dam</p>
         <a
