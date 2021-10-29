@@ -72,6 +72,10 @@ const Grid = function Grid() {
 
   const inputSideLengthClassNames = [styles['input-side-length']].join(' ');
   const sliderClassNames = [styles.slider].join(' ');
+  const sliderMarks = {
+    1: '1 Hz',
+    50: '50 Hz',
+  };
   const btnsClassNames = [styles.btns].join(' ');
 
   return (
@@ -103,6 +107,7 @@ const Grid = function Grid() {
           min={1}
           max={50}
           onChange={handleSpeedChange}
+          marks={sliderMarks}
           style={{ width: '200px' }}
         />
       </div>
