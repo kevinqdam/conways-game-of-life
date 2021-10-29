@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { InputNumber, Button } from 'antd';
-import { ClearOutlined, PlaySquareOutlined } from '@ant-design/icons';
+import { ClearOutlined, PauseOutlined, PlaySquareOutlined } from '@ant-design/icons';
 
 import Cell from './Cell';
 import createGrid from '../factory/createGrid';
@@ -8,12 +8,24 @@ import { GRID_SIDE_SIZE_IN_PX, MAX_SIDE_LENGTH, MIN_SIDE_LENGTH } from '../const
 
 import styles from './styles/Grid.module.scss';
 import cellKey from '../util/cellKey';
+import nextGen from '../util/nextGen';
 
 const Grid = function Grid() {
   /* Hooks */
   const keysOfActiveCells = useRef(new Set());
   const [sideLength, setSideLength] = useState(MIN_SIDE_LENGTH);
   const [grid, setGrid] = useState(createGrid(sideLength, keysOfActiveCells.current));
+  const [isRunning, setIsRunning] = useState(false);
+  const isRunningRef = useRef(isRunning);
+
+  /* Game of Life Runner */
+  const run = useCallback(() => {
+    if (!isRunningRef.current) return;
+
+    keysOfActiveCells.current = nextGen(sideLength, keysOfActiveCells.current);
+    setGrid(createGrid(sideLength, keysOfActiveCells.current));
+    setTimeout(run, 1000);
+  }, [sideLength]);
 
   /* Event Handlers */
   const handleSideLengthInput = (n) => {
@@ -29,8 +41,18 @@ const Grid = function Grid() {
   };
   const handleClear = () => {
     keysOfActiveCells.current.clear();
-
+    setIsRunning(false);
+    isRunningRef.current = false;
     setGrid(createGrid(sideLength, keysOfActiveCells.current));
+  };
+  const handlePlayPause = () => {
+    setIsRunning(!isRunning);
+    if (!isRunning) {
+      isRunningRef.current = true;
+      run();
+    } else {
+      isRunningRef.current = false;
+    }
   };
 
   /* Styles */
@@ -51,8 +73,8 @@ const Grid = function Grid() {
   return (
     /* eslint-disable jsx-a11y/click-events-have-key-events */
     /* eslint-disable jsx-a11y/no-static-element-interactions */
-    <div onClick={handleGridClick}>
-      <div style={gridDynamicStyles} className={gridClassNames}>
+    <div>
+      <div onClick={handleGridClick} style={gridDynamicStyles} className={gridClassNames}>
         {
           grid.map(
             (rowArr, row) => rowArr.map(
@@ -68,11 +90,16 @@ const Grid = function Grid() {
           max={MAX_SIDE_LENGTH}
           defaultValue={MIN_SIDE_LENGTH}
           onChange={handleSideLengthInput}
+          disabled={isRunningRef.current}
         />
       </div>
       <div className={btnsClassNames}>
         <Button size="large" icon={<ClearOutlined />} onClick={handleClear} />
-        <Button size="large" type="primary" icon={<PlaySquareOutlined />} />
+        {(
+        isRunningRef.current
+          ? <Button size="large" type="primary" icon={<PauseOutlined />} onClick={handlePlayPause} />
+          : <Button size="large" type="primary" icon={<PlaySquareOutlined />} onClick={handlePlayPause} />
+        )}
       </div>
     </div>
     /* eslint-enable jsx-a11y/click-events-have-key-events */

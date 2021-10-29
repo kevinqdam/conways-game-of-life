@@ -17,18 +17,18 @@ const Cell = function Cell(props) {
   );
 };
 Cell.propTypes = {
-  cell: {
+  cell: PropTypes.shape({
     isActive: PropTypes.bool,
     row: PropTypes.number,
     col: PropTypes.number,
-  },
+  }),
 };
 Cell.defaultProps = {
-  cell: {
+  cell: PropTypes.shape({
     isActive: false,
-    row: null,
-    col: null,
-  },
+    row: 0,
+    col: 0,
+  }),
 };
 
 export default Cell;
